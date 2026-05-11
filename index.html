@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ikram Sama — Ingénieure Industrielle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+  :root {
+    --cyan: #00d4ff;
+    --orange: #ff6b1a;
+    --dark: #050a0f;
+    --dark2: #081520;
+    --dark3: #0c1e2f;
+    --grid: #0a1628;
+    --text: #e0f4ff;
+    --muted: #4a7a99;
+    --card-bg: rgba(8,21,32,0.85);
+    --border: rgba(0,212,255,0.2);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    overflow-x: hidden;
+  }
+
+  /* ── CANVAS BG ── */
+  #bg-canvas {
+    position: fixed; inset: 0;
+    z-index: 0; pointer-events: none;
+  }
+
+  /* ── LOCK SCREEN ── */
+  #lock-screen {
+    position: fixed; inset: 0; z-index: 100;
+    background: var(--dark);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2rem;
+  }
+  .lock-icon {
+    font-size: 4rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .lock-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.6rem;
+    color: var(--cyan);
+    letter-spacing: 4px;
+    text-align: center;
+  }
+  .lock-sub {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--muted);
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    text-align: center;
+    max-width: 320px;
+    line-height: 1.8;
+  }
+  #qr-display {
+    border: 1px solid var(--border);
+    padding: 1rem;
+    border-radius: 4px;
+    background: white;
+  }
+  .lock-hint {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-align: center;
+    opacity: 0.6;
+  }
+
+  /* ── MAIN PORTFOLIO ── */
+  #portfolio { position: relative; z-index: 1; display: none; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 3rem;
+    background: rgba(5,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    color: var(--cyan);
+    letter-spacing: 3px;
+  }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 2px;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--cyan); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 6rem 3rem 3rem;
+    position: relative;
+  }
+  .hero-inner {
+    max-width: 1100px; width: 100%;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+  }
+  .hero-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--orange);
+    letter-spacing: 4px;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+  .hero-name {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+  .hero-name span { color: var(--cyan); }
+  .hero-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.6s forwards;
+  }
+  .hero-desc {
+    font-size: 1rem;
+    line-height: 1.9;
+    color: rgba(224,244,255,0.75);
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+    border-left: 2px solid var(--cyan);
+    padding-left: 1.2rem;
+  }
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1s forwards;
+  }
+  .btn-primary {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    padding: 0.75rem 1.8rem;
+    background: var(--cyan);
+    color: var(--dark);
+    border: none; border-radius: 2px;
+    cursor: pointer; text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 24px rgba(0,212,255,0.4); }
+  .btn-outline {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    padding: 0.75rem 1.8rem;
+    background: transparent;
+    color: var(--cyan);
+    border: 1px solid var(--cyan);
+    border-radius: 2px;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.3s;
+  }
+  .btn-outline:hover { background: rgba(0,212,255,0.1); }
+
+  /* PHOTO */
+  .hero-photo-wrap {
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.5s forwards;
+  }
+  .photo-frame {
+    position: relative; width: 320px; height: 320px;
+  }
+  .photo-frame::before {
+    content: '';
+    position: absolute; inset: -10px;
+    border: 1px solid var(--cyan);
+    border-radius: 2px;
+    animation: rotate-border 8s linear infinite;
+    border-top-color: var(--orange);
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+  }
+  .photo-frame::after {
+    content: '';
+    position: absolute; inset: -20px;
+    border: 1px solid var(--orange);
+    border-radius: 2px;
+    animation: rotate-border 12s linear infinite reverse;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-bottom-color: var(--cyan);
+  }
+  .photo-inner {
+    width: 100%; height: 100%;
+    border-radius: 2px; overflow: hidden;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .photo-inner img { width:100%; height:100%; object-fit:cover; }
+  .photo-placeholder {
+    font-family: 'Orbitron', monospace;
+    font-size: 5rem; color: var(--muted);
+    opacity: 0.4;
+  }
+  .photo-corner {
+    position: absolute; width: 20px; height: 20px;
+    border-color: var(--cyan); border-style: solid;
+  }
+  .photo-corner.tl { top:0; left:0; border-width: 2px 0 0 2px; }
+  .photo-corner.tr { top:0; right:0; border-width: 2px 2px 0 0; }
+  .photo-corner.bl { bottom:0; left:0; border-width: 0 0 2px 2px; }
+  .photo-corner.br { bottom:0; right:0; border-width: 0 2px 2px 0; }
+
+  /* ── SECTION BASE ── */
+  section {
+    max-width: 1100px; margin: 0 auto;
+    padding: 5rem 3rem;
+  }
+  .section-header { margin-bottom: 3rem; }
+  .section-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--orange);
+    letter-spacing: 4px;
+    margin-bottom: 0.5rem;
+  }
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    color: var(--text);
+  }
+  .section-line {
+    width: 60px; height: 2px;
+    background: linear-gradient(to right, var(--cyan), transparent);
+    margin-top: 1rem;
+  }
+
+  /* ── SKILLS ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .skill-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .skill-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: var(--cyan);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+  .skill-card:hover { border-color: rgba(0,212,255,0.5); transform: translateY(-3px); }
+  .skill-card:hover::before { transform: scaleX(1); }
+  .skill-icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
+  .skill-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    margin-bottom: 0.75rem;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: rgba(224,244,255,0.7);
+    background: rgba(0,212,255,0.05);
+    letter-spacing: 1px;
+  }
+
+  /* ── EXPERIENCE TIMELINE ── */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 1px; background: var(--border);
+  }
+  .tl-item {
+    position: relative; padding-left: 2.5rem; margin-bottom: 3rem;
+  }
+  .tl-dot {
+    position: absolute; left: -5px; top: 4px;
+    width: 11px; height: 11px;
+    border-radius: 50%; border: 2px solid var(--cyan);
+    background: var(--dark);
+  }
+  .tl-date {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--orange);
+    letter-spacing: 2px;
+    margin-bottom: 0.4rem;
+  }
+  .tl-company {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    margin-bottom: 0.3rem;
+  }
+  .tl-role {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+  .tl-desc {
+    font-size: 0.95rem;
+    line-height: 1.85;
+    color: rgba(224,244,255,0.7);
+  }
+  .tl-desc li { margin-bottom: 0.4rem; list-style: none; padding-left: 1rem; }
+  .tl-desc li::before { content: '▸ '; color: var(--cyan); }
+
+  /* ── PROJECTS ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .proj-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .proj-card:hover { transform: translateY(-4px); border-color: rgba(0,212,255,0.5); }
+  .proj-header {
+    padding: 1rem 1.5rem;
+    background: rgba(0,212,255,0.05);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .proj-emoji { font-size: 1.5rem; }
+  .proj-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    color: var(--text);
+    letter-spacing: 1px;
+  }
+  .proj-body { padding: 1.2rem 1.5rem; }
+  .proj-desc {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: rgba(224,244,255,0.7);
+    margin-bottom: 1rem;
+  }
+  .proj-tech { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+  /* ── CONTACT ── */
+  #contact-section {
+    border-top: 1px solid var(--border);
+    padding: 4rem 3rem;
+  }
+  .contact-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 2rem;
+  }
+  .contact-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+  .contact-link {
+    display: flex; align-items: center; gap: 0.6rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+  }
+  .contact-link:hover { color: var(--cyan); }
+  .contact-link svg { width: 16px; height: 16px; fill: currentColor; }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(24px); }
+  }
+  @keyframes pulse {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+  }
+  @keyframes rotate-border {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes scanline {
+    0% { top: -2px; }
+    100% { top: 100%; }
+  }
+
+  /* SCANLINE on hero photo */
+  .photo-inner::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; height: 2px;
+    background: rgba(0,212,255,0.2);
+    animation: scanline 3s linear infinite;
+  }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  /* PROGRESS BAR for skills */
+  .skill-bar-wrap { margin-top: 0.8rem; }
+  .skill-bar-label {
+    display: flex; justify-content: space-between;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem; color: var(--muted); margin-bottom: 4px;
+  }
+  .skill-bar-bg {
+    background: rgba(0,212,255,0.1);
+    height: 3px; border-radius: 2px; overflow: hidden;
+  }
+  .skill-bar-fill {
+    height: 100%; background: linear-gradient(to right, var(--cyan), var(--orange));
+    border-radius: 2px;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 1.2s cubic-bezier(0.16,1,0.3,1);
+  }
+  .skill-bar-fill.animate { transform: scaleX(1); }
+
+  /* glitch text effect */
+  .glitch {
+    position: relative;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute; left: 0; top: 0;
+    width: 100%;
+  }
+  .glitch::before {
+    color: var(--orange);
+    animation: glitch1 4s infinite;
+  }
+  .glitch::after {
+    color: var(--cyan);
+    animation: glitch2 4s infinite;
+  }
+  @keyframes glitch1 {
+    0%,90%,100% { clip-path: none; transform: none; opacity: 0; }
+    92% { clip-path: polygon(0 30%, 100% 30%, 100% 35%, 0 35%); transform: translate(-2px); opacity: 1; }
+    94% { clip-path: polygon(0 60%, 100% 60%, 100% 65%, 0 65%); transform: translate(2px); opacity: 1; }
+    96% { clip-path: none; opacity: 0; }
+  }
+  @keyframes glitch2 {
+    0%,92%,100% { clip-path: none; transform: none; opacity: 0; }
+    93% { clip-path: polygon(0 50%, 100% 50%, 100% 55%, 0 55%); transform: translate(2px); opacity: 1; }
+    95% { clip-path: polygon(0 10%, 100% 10%, 100% 15%, 0 15%); transform: translate(-2px); opacity: 1; }
+    97% { clip-path: none; opacity: 0; }
+  }
+
+  /* BLINK cursor */
+  .blink { animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Responsive */
+  @media(max-width: 768px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-photo-wrap { order: -1; }
+    .photo-frame { width: 220px; height: 220px; }
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 4rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND CANVAS -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- ══════════════════════════════════════════ LOCK SCREEN -->
+<div id="lock-screen">
+  <div class="lock-icon">🔒</div>
+  <div class="lock-title">ACCÈS RESTREINT</div>
+  <div class="lock-sub">Scannez le QR code sur la carte<br>pour accéder au portfolio</div>
+  <div id="qr-display"></div>
+  <div class="lock-hint">[ IKRAM SAMA — PORTFOLIO PRIVÉ ]</div>
+</div>
+
+<!-- ══════════════════════════════════════════ PORTFOLIO -->
+<div id="portfolio">
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">IS<span style="color:var(--orange)">_</span></div>
+    <div class="nav-links">
+      <a href="#about">PROFIL</a>
+      <a href="#skills">COMPÉTENCES</a>
+      <a href="#experience">EXPÉRIENCES</a>
+      <a href="#projects">PROJETS</a>
+      <a href="#contact-section">CONTACT</a>
+    </div>
+  </nav>
+
+  <!-- ══ HERO ══ -->
+  <section id="about" style="padding-top:0;">
+    <div id="hero">
+      <div class="hero-inner">
+        <!-- TEXT -->
+        <div>
+          <div class="hero-label">// INGÉNIEURE D'ÉTAT</div>
+          <h1 class="hero-name glitch" data-text="IKRAM SAMA">IK<span>RAM</span><br>SAMA</h1>
+          <div class="hero-title">Électromécanique · Digitalisation · Industrie 4.0</div>
+          <p class="hero-desc">
+            Ingénieure passionnée par la convergence entre l'automatisation industrielle et le numérique. 
+            Spécialisée en systèmes SCADA, IoT industriel et vision par ordinateur, je transforme 
+            les données machines en intelligence opérationnelle. Diplômée de l'ENSAM Meknès 2026.
+          </p>
+          <div class="hero-btns">
+            <a href="mailto:ikramsama2002@gmail.com" class="btn-primary">CONTACTER</a>
+            <a href="https://linkedin.com/in/ikram-sama" target="_blank" class="btn-outline">LINKEDIN</a>
+          </div>
+        </div>
+        <!-- PHOTO -->
+        <div class="hero-photo-wrap">
+          <div class="photo-frame">
+            <div class="photo-corner tl"></div>
+            <div class="photo-corner tr"></div>
+            <div class="photo-corner bl"></div>
+            <div class="photo-corner br"></div>
+            <div class="photo-inner" id="hero-photo">
+              <!-- Replace src with your actual photo path -->
+              <img src="photo.jpg" alt="Ikram Sama" onerror="this.parentNode.innerHTML='<div class=photo-placeholder>IS</div>'" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- ══ SKILLS ══ -->
+  <section id="skills">
+    <div class="section-header reveal">
+      <div class="section-tag">// 02 · COMPÉTENCES TECHNIQUES</div>
+      <h2 class="section-title">EXPERTISE & OUTILS</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <div class="skill-icon">⚙️</div>
+        <div class="skill-name">AUTOMATISATION & CONTRÔLE</div>
+        <div class="skill-tags">
+          <span class="tag">TIA Portal</span><span class="tag">Unity Pro XL</span>
+          <span class="tag">GRAFCET</span><span class="tag">Ladder</span>
+          <span class="tag">S7-1200</span><span class="tag">Schneider</span>
+          <span class="tag">SCADA</span><span class="tag">PID</span>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%"></div></div>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🌐</div>
+        <div class="skill-name">INDUSTRIE 4.0 & PROTOCOLES</div>
+        <div class="skill-tags">
+          <span class="tag">OPC UA</span><span class="tag">MQTT</span>
+          <span class="tag">Modbus TCP</span><span class="tag">Profibus</span>
+          <span class="tag">Profinet</span><span class="tag">Ethernet/IP</span>
+          <span class="tag">KepServerEX</span><span class="tag">Node-RED</span>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:85%"></div></div>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">💻</div>
+        <div class="skill-name">DÉVELOPPEMENT & DATA</div>
+        <div class="skill-tags">
+          <span class="tag">Python</span><span class="tag">SQL</span>
+          <span class="tag">MATLAB</span><span class="tag">C/C++</span>
+          <span class="tag">Power BI</span><span class="tag">OpenCV</span>
+          <span class="tag">Java</span>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:82%"></div></div>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🤖</div>
+        <div class="skill-name">MICROCONTRÔLEURS & IoT</div>
+        <div class="skill-tags">
+          <span class="tag">ESP32</span><span class="tag">Arduino</span>
+          <span class="tag">68HC11</span><span class="tag">UART</span>
+          <span class="tag">I2C</span><span class="tag">SPI</span>
+          <span class="tag">MPU-6050</span><span class="tag">GPS</span>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">📐</div>
+        <div class="skill-name">CONCEPTION & SIMULATION</div>
+        <div class="skill-tags">
+          <span class="tag">CATIA</span><span class="tag">AutoCAD</span>
+          <span class="tag">ANSYS</span><span class="tag">Simulink</span>
+          <span class="tag">Éléments finis</span>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:78%"></div></div>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">⚡</div>
+        <div class="skill-name">ÉNERGIES & SMART GRID</div>
+        <div class="skill-tags">
+          <span class="tag">Systèmes PV</span><span class="tag">KPI énergie</span>
+          <span class="tag">Smart Grid 4.0</span><span class="tag">IoT énergétique</span>
+          <span class="tag">OpenLCA</span>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:75%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- ══ EXPERIENCE ══ -->
+  <section id="experience">
+    <div class="section-header reveal">
+      <div class="section-tag">// 03 · PARCOURS</div>
+      <h2 class="section-title">EXPÉRIENCES DE STAGE</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="timeline">
+      <!-- PFE -->
+      <div class="tl-item reveal">
+        <div class="tl-dot" style="border-color:var(--orange); box-shadow:0 0 8px var(--orange)"></div>
+        <div class="tl-date">2026 — PFE (PROJET DE FIN D'ÉTUDES)</div>
+        <div class="tl-company">POLYDESIGN SYSTEMS</div>
+        <div class="tl-role">Digitalisation du Contrôle Qualité</div>
+        <ul class="tl-desc">
+          <li>Conception et déploiement d'un <strong style="color:var(--cyan)">tableau de bord temps réel</strong> pour la supervision complète du contrôle qualité en production</li>
+          <li>Mise en place d'un pipeline de données automatisé reliant les capteurs terrain à la base de données centrale, avec traitement et archivage en continu</li>
+          <li>Développement d'un <strong style="color:var(--cyan)">système de détection d'anomalies</strong> par vision par ordinateur (caméras industrielles + OpenCV) pour identifier les défauts de fabrication sans intervention humaine</li>
+          <li>Résultat : réduction significative du taux de non-conformité et visibilité totale sur les indicateurs qualité en temps réel</li>
+        </ul>
+        <div style="margin-top:1rem;" class="skill-tags">
+          <span class="tag">Python</span><span class="tag">OpenCV</span><span class="tag">SQL</span>
+          <span class="tag">Power BI</span><span class="tag">Vision par ordinateur</span>
+        </div>
+      </div>
+
+      <!-- PFA -->
+      <div class="tl-item reveal">
+        <div class="tl-dot" style="border-color:var(--cyan); box-shadow:0 0 8px var(--cyan)"></div>
+        <div class="tl-date">JUILLET — AOÛT 2025 — PFA (PROJET DE FIN D'ANNÉE)</div>
+        <div class="tl-company">OCP BENGUERIR</div>
+        <div class="tl-role">Automatisation Industrielle — Architecture Schneider</div>
+        <ul class="tl-desc">
+          <li>Audit complet de l'architecture de contrôle <strong style="color:var(--cyan)">Schneider Electric</strong> sur les lignes de production : cartographie des automates, analyse des boucles de régulation et identification des goulots fonctionnels</li>
+          <li>Conception et développement d'interfaces de supervision <strong style="color:var(--cyan)">SCADA sous Unity Pro XL</strong> : pages opérateurs, synoptiques de process, gestion des alarmes et des états de fonctionnement</li>
+          <li>Proposition d'axes d'amélioration pour la fiabilité et la traçabilité des données de production</li>
+          <li>Résultat : interfaces opérateurs plus lisibles, réduction du temps de diagnostic des pannes</li>
+        </ul>
+        <div style="margin-top:1rem;" class="skill-tags">
+          <span class="tag">Unity Pro XL</span><span class="tag">SCADA</span>
+          <span class="tag">Schneider</span><span class="tag">HMI</span>
+        </div>
+      </div>
+
+      <!-- Initiation -->
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <div class="tl-date">JUILLET 2024 — STAGE D'INITIATION</div>
+        <div class="tl-company">HUILERIES SOUS BELHASSAN</div>
+        <div class="tl-role">Analyse des Défaillances Machines</div>
+        <ul class="tl-desc">
+          <li>Diagnostic des pannes récurrentes sur les équipements de production (presses, convoyeurs, moteurs)</li>
+          <li>Identification des causes racines par méthode AMDEC et arbre des causes</li>
+          <li>Résultat : recommandations de maintenance préventive pour réduire les arrêts de production</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- ══ PROJECTS ══ -->
+  <section id="projects">
+    <div class="section-header reveal">
+      <div class="section-tag">// 04 · RÉALISATIONS</div>
+      <h2 class="section-title">PROJETS TECHNIQUES</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="projects-grid">
+      <div class="proj-card reveal">
+        <div class="proj-header">
+          <div class="proj-emoji">🚁</div>
+          <div class="proj-title">COMMANDE PID — DRONE BIROTOR</div>
+        </div>
+        <div class="proj-body">
+          <p class="proj-desc">
+            Conception et implémentation d'un régulateur PID numérique en temps réel pour stabiliser 
+            un drone birotor. Intégration du gyroscope <strong style="color:var(--cyan)">MPU-6050</strong> 
+            pour la mesure d'attitude et d'un module GPS pour le contrôle de position absolue. 
+            Le système ajuste les vitesses des rotors en temps réel pour maintenir la stabilité de vol.
+          </p>
+          <div class="proj-tech">
+            <span class="tag">PID numérique</span><span class="tag">ESP32</span>
+            <span class="tag">MPU-6050</span><span class="tag">GPS</span><span class="tag">Temps réel</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-header">
+          <div class="proj-emoji">📊</div>
+          <div class="proj-title">DASHBOARD SCADA — SIEMENS S7-1200</div>
+        </div>
+        <div class="proj-body">
+          <p class="proj-desc">
+            Système de supervision SCADA complet pour automate Siemens S7-1200 développé sous 
+            <strong style="color:var(--cyan)">Node-RED</strong>. Visualisation temps réel des entrées/sorties, 
+            historisation des données, gestion des alarmes et tableau de bord opérateur accessible depuis 
+            navigateur web.
+          </p>
+          <div class="proj-tech">
+            <span class="tag">Node-RED</span><span class="tag">S7-1200</span>
+            <span class="tag">SCADA</span><span class="tag">OPC UA</span><span class="tag">Dashboard</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-header">
+          <div class="proj-emoji">🖥️</div>
+          <div class="proj-title">INTERFACE HMI — TIA PORTAL</div>
+        </div>
+        <div class="proj-body">
+          <p class="proj-desc">
+            Conception d'une interface graphique HMI professionnelle sous <strong style="color:var(--cyan)">TIA Portal</strong> 
+            pour le pilotage et la surveillance locale de l'automate S7-1200. Interface avec pages de synoptique, 
+            gestion des alarmes, modes de fonctionnement (Manuel/Auto/Sécurité) et journalisation des événements.
+          </p>
+          <div class="proj-tech">
+            <span class="tag">TIA Portal</span><span class="tag">WinCC</span>
+            <span class="tag">HMI</span><span class="tag">Alarmes</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-header">
+          <div class="proj-emoji">⚡</div>
+          <div class="proj-title">COMMANDE MOTEUR DC — ESP32</div>
+        </div>
+        <div class="proj-body">
+          <p class="proj-desc">
+            Pilotage d'un moteur à courant continu via <strong style="color:var(--cyan)">ESP32</strong> 
+            avec régulateur PID numérique. Supervision à distance via interface web embarquée. 
+            Contrôle de vitesse et de sens de rotation avec retour tachymétrique en temps réel.
+          </p>
+          <div class="proj-tech">
+            <span class="tag">ESP32</span><span class="tag">PID</span>
+            <span class="tag">PWM</span><span class="tag">Moteur DC</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-header">
+          <div class="proj-emoji">🚗</div>
+          <div class="proj-title">CHÂSSIS VOITURE ÉLECTRIQUE — ANSYS</div>
+        </div>
+        <div class="proj-body">
+          <p class="proj-desc">
+            Dimensionnement et optimisation structurelle d'un châssis pour voiture électrique 
+            par simulation éléments finis sous <strong style="color:var(--cyan)">ANSYS</strong>. 
+            Analyse des contraintes mécaniques, optimisation du ratio rigidité/masse et validation 
+            des critères de résistance.
+          </p>
+          <div class="proj-tech">
+            <span class="tag">ANSYS</span><span class="tag">CATIA</span>
+            <span class="tag">Éléments finis</span><span class="tag">Mécanique</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-header">
+          <div class="proj-emoji">🔧</div>
+          <div class="proj-title">MACHINE À BOBINER LES CÂBLES</div>
+        </div>
+        <div class="proj-body">
+          <p class="proj-desc">
+            Conception complète d'une machine à bobiner les câbles électriques en bureau d'étude : 
+            dimensionnement des actionneurs, choix des composants, plans d'assemblage sous 
+            <strong style="color:var(--cyan)">CATIA</strong> et calculs de résistance des matériaux.
+          </p>
+          <div class="proj-tech">
+            <span class="tag">CATIA</span><span class="tag">AutoCAD</span>
+            <span class="tag">Conception mécanique</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CONTACT ══ -->
+  <div id="contact-section">
+    <div class="contact-inner">
+      <div>
+        <div class="section-tag" style="margin-bottom:0.5rem">// CONTACT</div>
+        <div style="font-family:'Orbitron',monospace; font-size:1.2rem; color:var(--cyan)">
+          IKRAM SAMA<span class="blink">_</span>
+        </div>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:ikramsama2002@gmail.com" class="contact-link">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          ikramsama2002@gmail.com
+        </a>
+        <a href="tel:+212700948230" class="contact-link">
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          +212 700-948230
+        </a>
+        <a href="https://linkedin.com/in/ikram-sama" target="_blank" class="contact-link">
+          <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+          LinkedIn
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end portfolio -->
+
+<script>
+// ═══════════════════════════════════════════════
+// CONFIG — CHANGE THIS SECRET KEY
+const SECRET_KEY = 'ikram2026';
+// The QR code will link to:  https://YOURSITE/?k=ikram2026
+// ═══════════════════════════════════════════════
+
+// ── QR Code Access Gate ──
+function checkAccess() {
+  const params = new URLSearchParams(window.location.search);
+  const key = params.get('k');
+  if (key === SECRET_KEY) {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('portfolio').style.display = 'block';
+    initPortfolio();
+  } else {
+    // Show QR code on lock screen
+    const url = window.location.href.split('?')[0] + '?k=' + SECRET_KEY;
+    new QRCode(document.getElementById('qr-display'), {
+      text: url,
+      width: 150, height: 150,
+      colorDark: '#000000', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+}
+
+// ── Animated Background Canvas ──
+function initCanvas() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Grid lines
+  function drawGrid() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Radial gradient background
+    const grad = ctx.createRadialGradient(
+      canvas.width/2, canvas.height/2, 0,
+      canvas.width/2, canvas.height/2, canvas.width*0.8
+    );
+    grad.addColorStop(0, '#081520');
+    grad.addColorStop(1, '#050a0f');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(0,212,255,0.04)';
+    ctx.lineWidth = 1;
+    const spacing = 60;
+    for (let x = 0; x < canvas.width; x += spacing) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    for (let y = 0; y < canvas.height; y += spacing) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+  }
+
+  // Floating particles
+  const particles = [];
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 1.5 + 0.5,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      color: Math.random() > 0.7 ? 'rgba(255,107,26,' : 'rgba(0,212,255,',
+      alpha: Math.random() * 0.6 + 0.2
+    });
+  }
+
+  // Connections between close particles
+  function drawParticles() {
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + p.alpha + ')';
+      ctx.fill();
+    });
+
+    // Connect nearby
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i+1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if (d < 100) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = 'rgba(0,212,255,' + (0.06 * (1 - d/100)) + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function loop() {
+    drawGrid();
+    drawParticles();
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// ── Scroll reveal ──
+function initReveal() {
+  const els = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  els.forEach(el => obs.observe(el));
+}
+
+// ── Skill bars ──
+function initSkillBars() {
+  const fills = document.querySelectorAll('.skill-bar-fill');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('animate'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.5 });
+  fills.forEach(f => obs.observe(f));
+}
+
+// ── Smooth scroll ──
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const el = document.querySelector(a.getAttribute('href'));
+    if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+
+function initPortfolio() {
+  initReveal();
+  initSkillBars();
+}
+
+// Init
+initCanvas();
+checkAccess();
+</script>
+</body>
+</html>
