@@ -1103,92 +1103,333 @@ function checkAccess() {
   }
 }
 
-// ── Animated Background Canvas ──
+// ── Advanced Animated Background Canvas ──
 function initCanvas() {
   const canvas = document.getElementById('bg-canvas');
   const ctx = canvas.getContext('2d');
+  let W, H, t = 0;
 
   function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
   }
   resize();
   window.addEventListener('resize', resize);
 
-  // Grid lines
-  function drawGrid() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Radial gradient background
-    const grad = ctx.createRadialGradient(
-      canvas.width/2, canvas.height/2, 0,
-      canvas.width/2, canvas.height/2, canvas.width*0.8
-    );
-    grad.addColorStop(0, '#081520');
-    grad.addColorStop(1, '#050a0f');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Grid
-    ctx.strokeStyle = 'rgba(0,212,255,0.04)';
-    ctx.lineWidth = 1;
-    const spacing = 60;
-    for (let x = 0; x < canvas.width; x += spacing) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-    }
-    for (let y = 0; y < canvas.height; y += spacing) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-    }
-  }
-
-  // Floating particles
-  const particles = [];
-  for (let i = 0; i < 60; i++) {
-    particles.push({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      r: Math.random() * 1.5 + 0.5,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      color: Math.random() > 0.7 ? 'rgba(255,107,26,' : 'rgba(0,212,255,',
-      alpha: Math.random() * 0.6 + 0.2
-    });
-  }
-
-  // Connections between close particles
-  function drawParticles() {
-    particles.forEach(p => {
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.color + p.alpha + ')';
-      ctx.fill();
-    });
-
-    // Connect nearby
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i+1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const d = Math.sqrt(dx*dx + dy*dy);
-        if (d < 100) {
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = 'rgba(0,212,255,' + (0.06 * (1 - d/100)) + ')';
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
+  /* ── Circuit nodes ── */
+  const nodes = [];
+  function initNodes() {
+    nodes.length = 0;
+    const cols = Math.floor(W / 110), rows = Math.floor(H / 110);
+    for (let c = 0; c <= cols; c++) {
+      for (let r = 0; r <= rows; r++) {
+        if (Math.random() < 0.55) {
+          nodes.push({
+            x: c * 110 + Math.random() * 40 - 20,
+            y: r * 110 + Math.random() * 40 - 20,
+            pulse: Math.random() * Math.PI * 2,
+            speed: 0.01 + Math.random() * 0.02,
+            type: Math.random() < 0.15 ? 'hub' : 'node'
+          });
         }
       }
     }
   }
+  initNodes();
+  window.addEventListener('resize', initNodes);
 
+  /* ── Circuit edges ── */
+  const edges = [];
+  function buildEdges() {
+    edges.length = 0;
+    nodes.forEach((a, i) => {
+      let count = 0;
+      nodes.forEach((b, j) => {
+        if (i >= j) return;
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d < 160 && count < 3 && Math.random() < 0.5) {
+          edges.push({ a, b, progress: 0, speed: 0.003 + Math.random() * 0.005, active: Math.random() < 0.3 });
+          count++;
+        }
+      });
+    });
+  }
+  buildEdges();
+  window.addEventListener('resize', buildEdges);
+
+  /* ── Data packets travelling edges ── */
+  const packets = [];
+  for (let i = 0; i < 18; i++) {
+    packets.push({ edgeIdx: Math.floor(Math.random() * edges.length), t: Math.random(), speed: 0.003 + Math.random() * 0.006, dir: 1 });
+  }
+
+  /* ── Holographic rings (robot body suggestion) ── */
+  const rings = [
+    { cx: 0.15, cy: 0.35, rx: 90, ry: 38, angle: -0.35, speed: 0.004 },
+    { cx: 0.85, cy: 0.55, rx: 80, ry: 32, angle: 0.55, speed: -0.005 },
+    { cx: 0.5,  cy: 0.2,  rx: 60, ry: 24, angle: 0.1,  speed: 0.007 },
+    { cx: 0.72, cy: 0.8,  rx: 100, ry: 42, angle: -0.2, speed: 0.003 }
+  ];
+
+  /* ── Robot arm segments ── */
+  class RobotArm {
+    constructor(ox, oy, side) {
+      this.ox = ox; this.oy = oy; this.side = side;
+      this.seg = [
+        { len: W * 0.13, angle: side === 'L' ? -0.4 : Math.PI + 0.4, speed: 0.003 + Math.random()*0.002 },
+        { len: W * 0.10, angle: side === 'L' ?  0.6 : Math.PI - 0.6, speed: 0.004 + Math.random()*0.003 },
+        { len: W * 0.07, angle: side === 'L' ? -0.3 : Math.PI + 0.3, speed: 0.005 + Math.random()*0.004 }
+      ];
+      this.baseAngle = side === 'L' ? 0 : Math.PI;
+      this.phaseOffset = Math.random() * Math.PI * 2;
+    }
+    update(t) {
+      const s = this.side === 'L' ? 1 : -1;
+      this.seg[0].angle = this.baseAngle + Math.sin(t * this.seg[0].speed + this.phaseOffset) * 0.45 * s;
+      this.seg[1].angle = this.seg[0].angle + Math.sin(t * this.seg[1].speed + this.phaseOffset + 1) * 0.6 * s;
+      this.seg[2].angle = this.seg[1].angle + Math.sin(t * this.seg[2].speed + this.phaseOffset + 2) * 0.7 * s;
+    }
+    draw(ctx, t) {
+      this.update(t);
+      let x = this.ox * W, y = this.oy * H;
+      const joints = [[x, y]];
+
+      this.seg.forEach(sg => {
+        x += Math.cos(sg.angle) * sg.len;
+        y += Math.sin(sg.angle) * sg.len;
+        joints.push([x, y]);
+      });
+
+      // Arm body
+      for (let i = 0; i < joints.length - 1; i++) {
+        const alpha = 0.12 + i * 0.04;
+        ctx.beginPath();
+        ctx.moveTo(joints[i][0], joints[i][1]);
+        ctx.lineTo(joints[i+1][0], joints[i+1][1]);
+        ctx.strokeStyle = `rgba(0,212,255,${alpha})`;
+        ctx.lineWidth = 5 - i;
+        ctx.stroke();
+        // Glow
+        ctx.strokeStyle = `rgba(0,212,255,${alpha * 0.4})`;
+        ctx.lineWidth = (5 - i) * 3;
+        ctx.stroke();
+      }
+
+      // Joint circles
+      joints.forEach(([jx, jy], i) => {
+        const r = i === 0 ? 7 : 4 - i * 0.5;
+        ctx.beginPath(); ctx.arc(jx, jy, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0,212,255,${0.4 - i * 0.05})`;
+        ctx.fill();
+        ctx.beginPath(); ctx.arc(jx, jy, r + 4, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0,212,255,0.12)`;
+        ctx.lineWidth = 1; ctx.stroke();
+      });
+
+      // End-effector claw
+      const [ex, ey] = joints[joints.length - 1];
+      const lastAngle = this.seg[this.seg.length-1].angle;
+      const clawOpen = 0.25 + Math.abs(Math.sin(t * 0.003)) * 0.2;
+      [-1, 1].forEach(d => {
+        ctx.beginPath();
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex + Math.cos(lastAngle + d * clawOpen) * 18, ey + Math.sin(lastAngle + d * clawOpen) * 18);
+        ctx.strokeStyle = 'rgba(0,212,255,0.35)';
+        ctx.lineWidth = 2; ctx.stroke();
+      });
+
+      // Laser from tip
+      const laserPulse = (Math.sin(t * 0.01 + this.phaseOffset) + 1) * 0.5;
+      ctx.beginPath();
+      ctx.arc(ex, ey, 3 + laserPulse * 4, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0,212,255,${0.6 * laserPulse})`;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(ex, ey, 12 + laserPulse * 8, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0,212,255,${0.08 * laserPulse})`;
+      ctx.fill();
+
+      return [ex, ey];
+    }
+  }
+
+  const arms = [
+    new RobotArm(0.05, 0.45, 'L'),
+    new RobotArm(0.95, 0.55, 'R'),
+    new RobotArm(0.02, 0.75, 'L'),
+    new RobotArm(0.98, 0.25, 'R')
+  ];
+
+  /* ── Scan lines ── */
+  let scanY = 0;
+  const scanSpeed = 0.6;
+
+  /* ── Data streams (vertical falling) ── */
+  const streams = [];
+  for (let i = 0; i < 22; i++) {
+    streams.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      speed: 0.5 + Math.random() * 1.5,
+      chars: Array.from({ length: 8 }, () => Math.random() < 0.5 ? '1' : '0'),
+      alpha: 0.05 + Math.random() * 0.12,
+      spacing: 14
+    });
+  }
+
+  /* ── Floating hex grid ── */
+  function drawHexGrid(alpha) {
+    const size = 48, cols = Math.ceil(W / (size * 1.73)) + 1, rows = Math.ceil(H / (size * 1.5)) + 1;
+    ctx.strokeStyle = `rgba(0,212,255,${alpha})`;
+    ctx.lineWidth = 0.5;
+    for (let r = -1; r < rows; r++) {
+      for (let c = -1; c < cols; c++) {
+        const cx = c * size * 1.73 + (r % 2) * size * 0.865;
+        const cy = r * size * 1.5;
+        ctx.beginPath();
+        for (let k = 0; k < 6; k++) {
+          const a = (Math.PI / 3) * k - Math.PI / 6;
+          const hx = cx + size * Math.cos(a);
+          const hy = cy + size * Math.sin(a);
+          k === 0 ? ctx.moveTo(hx, hy) : ctx.lineTo(hx, hy);
+        }
+        ctx.closePath(); ctx.stroke();
+      }
+    }
+  }
+
+  /* ── Main render loop ── */
   function loop() {
-    drawGrid();
-    drawParticles();
+    t++;
+
+    // Background
+    ctx.clearRect(0, 0, W, H);
+    const bg = ctx.createRadialGradient(W * 0.5, H * 0.45, 0, W * 0.5, H * 0.45, W * 0.85);
+    bg.addColorStop(0, '#071320');
+    bg.addColorStop(0.5, '#050d18');
+    bg.addColorStop(1, '#030810');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Hex grid layer
+    drawHexGrid(0.025);
+
+    // Holographic rings
+    rings.forEach(ring => {
+      ring.angle += ring.speed;
+      const cx = ring.cx * W, cy = ring.cy * H;
+      for (let layer = 0; layer < 3; layer++) {
+        const scale = 1 + layer * 0.3;
+        const alpha = (0.12 - layer * 0.035) * (0.6 + 0.4 * Math.sin(t * 0.02 + layer));
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(ring.angle + layer * 0.4);
+        ctx.scale(1, 0.38);
+        ctx.beginPath();
+        ctx.arc(0, 0, ring.rx * scale, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0,212,255,${alpha})`;
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([8, 20]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+    });
+
+    // Circuit edges
+    edges.forEach(edge => {
+      if (edge.active) {
+        const { a, b } = edge;
+        const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+        grad.addColorStop(0, 'rgba(0,212,255,0)');
+        grad.addColorStop(0.5, 'rgba(0,212,255,0.18)');
+        grad.addColorStop(1, 'rgba(0,212,255,0)');
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = grad; ctx.lineWidth = 0.8; ctx.stroke();
+      } else {
+        ctx.beginPath(); ctx.moveTo(edge.a.x, edge.a.y); ctx.lineTo(edge.b.x, edge.b.y);
+        ctx.strokeStyle = 'rgba(0,212,255,0.04)'; ctx.lineWidth = 0.5; ctx.stroke();
+      }
+    });
+
+    // Circuit nodes
+    nodes.forEach(n => {
+      n.pulse += n.speed;
+      const pv = (Math.sin(n.pulse) + 1) * 0.5;
+      const r = n.type === 'hub' ? 4 + pv * 2 : 2 + pv;
+      const alpha = n.type === 'hub' ? 0.6 + pv * 0.4 : 0.25 + pv * 0.25;
+      ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = n.type === 'hub' ? `rgba(0,212,255,${alpha})` : `rgba(0,180,220,${alpha})`;
+      ctx.fill();
+      if (n.type === 'hub') {
+        ctx.beginPath(); ctx.arc(n.x, n.y, r + 6 * pv, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0,212,255,${0.15 * pv})`; ctx.lineWidth = 1; ctx.stroke();
+      }
+    });
+
+    // Data packets
+    packets.forEach(pk => {
+      if (!edges[pk.edgeIdx]) { pk.edgeIdx = Math.floor(Math.random() * edges.length); return; }
+      pk.t += pk.speed * pk.dir;
+      if (pk.t > 1 || pk.t < 0) { pk.dir *= -1; pk.t = Math.max(0, Math.min(1, pk.t)); }
+      const e = edges[pk.edgeIdx];
+      const px = e.a.x + (e.b.x - e.a.x) * pk.t;
+      const py = e.a.y + (e.b.y - e.a.y) * pk.t;
+      const grd = ctx.createRadialGradient(px, py, 0, px, py, 6);
+      grd.addColorStop(0, 'rgba(255,255,255,0.9)');
+      grd.addColorStop(0.4, 'rgba(0,212,255,0.6)');
+      grd.addColorStop(1, 'rgba(0,212,255,0)');
+      ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2);
+      ctx.fillStyle = grd; ctx.fill();
+    });
+
+    // Robot arms (draw all, connect tips)
+    const tips = arms.map(arm => arm.draw(ctx, t));
+
+    // Beam between opposite arms
+    if (tips.length >= 2) {
+      [[0,1],[2,3]].forEach(([i,j]) => {
+        const [ax, ay] = tips[i], [bx, by] = tips[j];
+        const beamAlpha = 0.04 + 0.03 * Math.abs(Math.sin(t * 0.008 + i));
+        const bgrad = ctx.createLinearGradient(ax, ay, bx, by);
+        bgrad.addColorStop(0, `rgba(0,212,255,${beamAlpha})`);
+        bgrad.addColorStop(0.5, `rgba(120,220,255,${beamAlpha * 2})`);
+        bgrad.addColorStop(1, `rgba(0,212,255,${beamAlpha})`);
+        ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by);
+        ctx.strokeStyle = bgrad; ctx.lineWidth = 1.5; ctx.stroke();
+      });
+    }
+
+    // Data streams (binary rain)
+    ctx.font = '11px "Share Tech Mono", monospace';
+    streams.forEach(s => {
+      s.y += s.speed;
+      if (s.y > H + s.chars.length * s.spacing) { s.y = -s.chars.length * s.spacing; s.x = Math.random() * W; }
+      s.chars.forEach((ch, idx) => {
+        if (Math.random() < 0.002) s.chars[idx] = Math.random() < 0.5 ? '1' : '0';
+        const fadeAlpha = s.alpha * (1 - idx / s.chars.length);
+        ctx.fillStyle = idx === 0 ? `rgba(180,240,255,${fadeAlpha * 2.5})` : `rgba(0,212,255,${fadeAlpha})`;
+        ctx.fillText(ch, s.x, s.y - idx * s.spacing);
+      });
+    });
+
+    // Horizontal scan line
+    scanY = (scanY + scanSpeed) % H;
+    const scanGrad = ctx.createLinearGradient(0, scanY - 60, 0, scanY + 10);
+    scanGrad.addColorStop(0, 'rgba(0,212,255,0)');
+    scanGrad.addColorStop(0.7, 'rgba(0,212,255,0.03)');
+    scanGrad.addColorStop(1, 'rgba(0,212,255,0.12)');
+    ctx.fillStyle = scanGrad;
+    ctx.fillRect(0, scanY - 60, W, 70);
+    ctx.beginPath(); ctx.moveTo(0, scanY); ctx.lineTo(W, scanY);
+    ctx.strokeStyle = 'rgba(0,212,255,0.18)'; ctx.lineWidth = 1; ctx.stroke();
+
+    // Vignette
+    const vig = ctx.createRadialGradient(W/2, H/2, H*0.3, W/2, H/2, H*0.85);
+    vig.addColorStop(0, 'rgba(0,0,0,0)');
+    vig.addColorStop(1, 'rgba(0,5,10,0.7)');
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
+
     requestAnimationFrame(loop);
   }
   loop();
