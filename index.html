@@ -714,7 +714,7 @@
         <div class="skill-tags">
           <span class="tag">Python</span><span class="tag">SQL</span>
           <span class="tag">MATLAB</span><span class="tag">C/C++</span>
-          <span class="tag">Power BI</span><span class="tag">OpenCV</span>
+          <span class="tag">OpenCV</span>
           <span class="tag">CATIA</span><span class="tag">ANSYS</span><span class="tag">Simulink</span>
         </div>
         <div class="skill-bar-wrap">
@@ -756,18 +756,71 @@
       <div class="tl-item reveal">
         <div class="tl-dot" style="border-color:var(--orange); box-shadow:0 0 8px var(--orange)"></div>
         <div class="tl-date">2026 — PFE (PROJET DE FIN D'ÉTUDES)</div>
-        <div class="tl-company">POLYDESIGN SYSTEMS</div>
-        <div class="tl-role">Système de Détection d'Anomalies par Vision par Ordinateur</div>
+        <div class="tl-company">POLYDESIGN SYSTEMS — AUTOMOTIVE SOLUTIONS</div>
+        <div class="tl-role" style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
+          Système Poka-Yoke & Vision par Ordinateur — Contrôle Composants F2X / F2U
+          <span style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:1px;padding:3px 10px;border:1px solid var(--orange);color:var(--orange);border-radius:2px;">🔄 IN PROGRESS</span>
+        </div>
         <div class="tl-inner">
           <div class="tl-content">
             <ul class="tl-desc">
-              <li>Développement d'un <strong style="color:var(--cyan)">système de détection d'anomalies</strong> par vision par ordinateur (caméras industrielles + OpenCV/deep learning) pour identifier les défauts de fabrication en temps réel sur la ligne de production</li>
-              <li>Implémentation d'un workflow de <strong style="color:var(--cyan)">validation et d'étiquetage</strong> : après détection, le système génère automatiquement un verdict de conformité — si la pièce est conforme, elle obtient l'autorisation de passer à la station suivante ; sinon, elle est orientée vers une décision opérateur (scrap ou rework)</li>
-              <li>Développement d'un <strong style="color:var(--cyan)">tableau de bord de supervision</strong> des indicateurs qualité (taux de conformité, types de défauts, historique) accessible en temps réel</li>
+              <li><strong style="color:var(--cyan)">Contexte :</strong> Mise en place d'un système automatisé avec contrôle Poka-Yoke pour garantir l'assemblage correct des composants sur pièces plastique F2X/F2U et assurer une traçabilité complète de chaque étape de production</li>
+              <li><strong style="color:var(--cyan)">Architecture :</strong> Ligne de 8 stations avec séquencement linéaire — progression bloquée jusqu'à validation de l'étape en cours, système de verrouillage inter-stations et indicateurs visuels d'état (Vert / Rouge / Orange)</li>
+              <li><strong style="color:var(--cyan)">Détection par vision :</strong> Caméras industrielles sur chaque station pour vérifier présence, position et orientation des composants — Spring Steel, Dampers, Cushions, Guiding Pins, vis, graisse — avant autorisation de passage à la station suivante</li>
+              <li><strong style="color:var(--cyan)">Verdict OK/NOK :</strong> Si conforme → autorisation automatique de passer à la station suivante. Si non-conforme → blocage + orientation opérateur vers décision Scrap ou Rework avec traçabilité complète</li>
+              <li><strong style="color:var(--cyan)">Traçabilité :</strong> Historique de production complet pour audit, analyse des défauts et indicateurs qualité en temps réel via tableau de bord de supervision</li>
             </ul>
+
+            <!-- SPECS TECHNIQUES -->
+            <div style="margin-top:1.2rem;padding:1rem;border:1px solid var(--border);border-radius:4px;background:rgba(0,212,255,0.03);">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--orange);letter-spacing:3px;margin-bottom:0.75rem;">// SPÉCIFICATIONS TECHNIQUES — CAHIER DES CHARGES</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.6rem;">
+                <div style="text-align:center;padding:0.6rem;background:rgba(0,212,255,0.05);border-radius:2px;border:1px solid var(--border)">
+                  <div style="font-family:'Orbitron',monospace;font-size:1.1rem;color:var(--cyan);font-weight:700">8</div>
+                  <div style="font-size:0.72rem;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:1px">STATIONS</div>
+                </div>
+                <div style="text-align:center;padding:0.6rem;background:rgba(0,212,255,0.05);border-radius:2px;border:1px solid var(--border)">
+                  <div style="font-family:'Orbitron',monospace;font-size:1.1rem;color:var(--cyan);font-weight:700">≤20s</div>
+                  <div style="font-size:0.72rem;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:1px">CYCLE CIBLE</div>
+                </div>
+                <div style="text-align:center;padding:0.6rem;background:rgba(0,212,255,0.05);border-radius:2px;border:1px solid var(--border)">
+                  <div style="font-family:'Orbitron',monospace;font-size:1.1rem;color:var(--cyan);font-weight:700">24V DC</div>
+                  <div style="font-size:0.72rem;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:1px">ALIMENTATION</div>
+                </div>
+                <div style="text-align:center;padding:0.6rem;background:rgba(0,212,255,0.05);border-radius:2px;border:1px solid var(--border)">
+                  <div style="font-family:'Orbitron',monospace;font-size:1.1rem;color:var(--cyan);font-weight:700">IP54</div>
+                  <div style="font-size:0.72rem;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:1px">PROTECTION</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FLOW 8 STATIONS -->
+            <div style="margin-top:1.2rem;">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--orange);letter-spacing:3px;margin-bottom:0.75rem;">// FLUX DES 8 STATIONS DE CONTRÔLE</div>
+              <div style="display:flex;flex-wrap:wrap;gap:0.3rem;align-items:center;">
+                <div style="font-size:0.72rem;font-family:'Share Tech Mono',monospace;padding:4px 8px;border:1px solid rgba(0,212,255,0.4);border-radius:2px;color:var(--cyan);background:rgba(0,212,255,0.08)">S1<br><span style="color:var(--muted);font-size:0.6rem">Spring+Damper</span></div>
+                <span style="color:var(--cyan);font-size:0.8rem">›</span>
+                <div style="font-size:0.72rem;font-family:'Share Tech Mono',monospace;padding:4px 8px;border:1px solid rgba(0,212,255,0.4);border-radius:2px;color:var(--cyan);background:rgba(0,212,255,0.08)">S2<br><span style="color:var(--muted);font-size:0.6rem">Vérif. Vis</span></div>
+                <span style="color:var(--cyan);font-size:0.8rem">›</span>
+                <div style="font-size:0.72rem;font-family:'Share Tech Mono',monospace;padding:4px 8px;border:1px solid rgba(0,212,255,0.4);border-radius:2px;color:var(--cyan);background:rgba(0,212,255,0.08)">S3<br><span style="color:var(--muted);font-size:0.6rem">Cushion+Pins</span></div>
+                <span style="color:var(--cyan);font-size:0.8rem">›</span>
+                <div style="font-size:0.72rem;font-family:'Share Tech Mono',monospace;padding:4px 8px;border:1px solid rgba(0,212,255,0.4);border-radius:2px;color:var(--cyan);background:rgba(0,212,255,0.08)">S4<br><span style="color:var(--muted);font-size:0.6rem">Graisse</span></div>
+                <span style="color:var(--cyan);font-size:0.8rem">›</span>
+                <div style="font-size:0.72rem;font-family:'Share Tech Mono',monospace;padding:4px 8px;border:1px solid rgba(255,107,26,0.5);border-radius:2px;color:var(--orange);background:rgba(255,107,26,0.08)">S5<br><span style="color:var(--muted);font-size:0.6rem">Translation</span></div>
+                <span style="color:var(--cyan);font-size:0.8rem">›</span>
+                <div style="font-size:0.72rem;font-family:'Share Tech Mono',monospace;padding:4px 8px;border:1px solid rgba(255,107,26,0.5);border-radius:2px;color:var(--orange);background:rgba(255,107,26,0.08)">S6-8<br><span style="color:var(--muted);font-size:0.6rem">Montage final</span></div>
+                <span style="color:var(--cyan);font-size:0.8rem">›</span>
+                <div style="font-size:0.72rem;font-family:'Share Tech Mono',monospace;padding:4px 10px;border:1px solid rgba(0,255,120,0.5);border-radius:2px;color:#00ff78;background:rgba(0,255,120,0.08)">✓ OK<br><span style="color:var(--muted);font-size:0.6rem">Traçabilité</span></div>
+              </div>
+              <div style="margin-top:0.5rem;font-size:0.75rem;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:1px">
+                ↳ Chaque station : Vision → OK ? Passe → NOK ? Bloqué → Scrap / Rework
+              </div>
+            </div>
+
             <div style="margin-top:1rem;" class="skill-tags">
               <span class="tag">Python</span><span class="tag">OpenCV</span><span class="tag">Deep Learning</span>
-              <span class="tag">SQL</span><span class="tag">Power BI</span><span class="tag">Vision industrielle</span>
+              <span class="tag">SQL</span><span class="tag">Vision industrielle</span>
+              <span class="tag">Poka-Yoke</span><span class="tag">Traçabilité</span>
             </div>
           </div>
           <div class="tl-thumb">
@@ -779,7 +832,7 @@
 
         <!-- PFE — Mini galerie images -->
         <div style="margin-top:1.5rem;">
-          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--orange);letter-spacing:3px;margin-bottom:0.75rem;">// CAPTURES DU PROJET PFE</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--orange);letter-spacing:3px;margin-bottom:0.75rem;">// SCREENSHOTS — TABLEAU DE BORD & SYSTÈME</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.75rem;">
             <div style="height:110px;border-radius:4px;overflow:hidden;border:1px solid var(--border);position:relative;">
               <img src="1.jpg" alt="Détection anomalies"
@@ -954,7 +1007,7 @@
       <!-- CHASSIS -->
       <div class="proj-card reveal">
         <div class="proj-img">
-          <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&q=60" alt="Châssis voiture électrique ANSYS" onerror="this.parentNode.style.background='var(--dark3)'"/>
+          <img src="https://images.unsplash.com/photo-1565043666747-69f6646db940?w=600&q=60" alt="Châssis voiture électrique ANSYS" onerror="this.parentNode.style.background='var(--dark3)'"/>
           <div class="proj-img-overlay"></div>
           <div class="proj-img-label">
             <div class="proj-emoji">🚗</div>
