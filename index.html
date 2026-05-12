@@ -358,7 +358,7 @@
   /* ── PROJECTS ── */
   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1.5rem;
   }
   .proj-card {
@@ -368,21 +368,66 @@
     overflow: hidden;
     transition: transform 0.3s, border-color 0.3s;
   }
-  .proj-card:hover { transform: translateY(-4px); border-color: rgba(0,212,255,0.5); }
-  .proj-header {
-    padding: 1rem 1.5rem;
-    background: rgba(0,212,255,0.05);
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 0.75rem;
+  .proj-card:hover { transform: translateY(-5px); border-color: rgba(0,212,255,0.6); }
+  .proj-card:hover .proj-img img { transform: scale(1.06); }
+
+  /* Image thumbnail on project card */
+  .proj-img {
+    position: relative; height: 170px; overflow: hidden;
+    background: var(--dark3);
   }
-  .proj-emoji { font-size: 1.5rem; }
+  .proj-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.5s ease;
+    filter: brightness(0.55) saturate(0.7);
+  }
+  .proj-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(0,212,255,0.15) 0%,
+      rgba(5,10,15,0.5) 60%,
+      rgba(255,107,26,0.12) 100%
+    );
+  }
+  .proj-img-label {
+    position: absolute; bottom: 10px; left: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .proj-emoji {
+    font-size: 1.6rem;
+    filter: drop-shadow(0 0 6px rgba(0,212,255,0.6));
+  }
   .proj-title {
     font-family: 'Orbitron', monospace;
-    font-size: 0.8rem;
-    color: var(--text);
+    font-size: 0.78rem;
+    color: #fff;
     letter-spacing: 1px;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.8);
   }
-  .proj-body { padding: 1.2rem 1.5rem; }
+  /* Scan line on image hover */
+  .proj-img::after {
+    content: '';
+    position: absolute; left: 0; right: 0; top: -100%;
+    height: 2px; background: rgba(0,212,255,0.4);
+    transition: top 0s;
+  }
+  .proj-card:hover .proj-img::after {
+    animation: scanProj 1.2s linear forwards;
+  }
+  @keyframes scanProj {
+    from { top: 0; } to { top: 100%; }
+  }
+
+  /* Top accent bar */
+  .proj-img::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(to right, var(--cyan), var(--orange));
+    z-index: 2;
+  }
+
+  .proj-body { padding: 1.1rem 1.4rem; }
   .proj-desc {
     font-size: 0.9rem;
     line-height: 1.8;
@@ -390,6 +435,36 @@
     margin-bottom: 1rem;
   }
   .proj-tech { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+  /* ── EXPERIENCE IMAGE THUMBNAIL ── */
+  .tl-inner { display: flex; gap: 1.5rem; align-items: flex-start; }
+  .tl-content { flex: 1; min-width: 0; }
+  .tl-thumb {
+    width: 160px; flex-shrink: 0;
+    border-radius: 4px; overflow: hidden;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .tl-thumb img {
+    width: 100%; height: 110px; object-fit: cover;
+    display: block;
+    filter: brightness(0.6) saturate(0.6);
+    transition: filter 0.4s;
+  }
+  .tl-thumb:hover img { filter: brightness(0.75) saturate(0.9); }
+  .tl-thumb-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(255,107,26,0.1));
+  }
+  .tl-thumb-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(5,10,15,0.85);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem; color: var(--cyan);
+    padding: 4px 8px; letter-spacing: 1px;
+    text-align: center;
+  }
+  @media(max-width:768px) { .tl-thumb { display:none; } }
 
   /* ── CONTACT ── */
   #contact-section {
@@ -554,17 +629,18 @@
       <div class="hero-inner">
         <!-- TEXT -->
         <div>
-          <div class="hero-label">// INGÉNIEURE D'ÉTAT</div>
+          <div class="hero-label">// INGÉNIEURE D'ÉTAT — ENSAM MEKNÈS 2026</div>
           <h1 class="hero-name glitch" data-text="IKRAM SAMA">IK<span>RAM</span><br>SAMA</h1>
-          <div class="hero-title">Électromécanique · Digitalisation · Industrie 4.0</div>
+          <div class="hero-title">Ingénieur d'État en Électromécanique</div>
           <p class="hero-desc">
-            Ingénieure passionnée par la convergence entre l'automatisation industrielle et le numérique. 
-            Spécialisée en systèmes SCADA, IoT industriel et vision par ordinateur, je transforme 
-            les données machines en intelligence opérationnelle. Diplômée de l'ENSAM Meknès 2026.
+            Ingénieur d'État spécialisée en digitalisation et automatisation industrielle. 
+            Je conçois des solutions d'interopérabilité entre systèmes industriels, développe 
+            des programmes de commande via automates PLC et supervise les processus de production 
+            à travers des systèmes de collecte et d'analyse de données (KPI, traçabilité, efficacité).
           </p>
           <div class="hero-btns">
             <a href="mailto:ikramsama2002@gmail.com" class="btn-primary">CONTACTER</a>
-            <a href="https://linkedin.com/in/ikram-sama" target="_blank" class="btn-outline">LINKEDIN</a>
+            <a href="https://www.linkedin.com/in/ikram-sama-a9a8011a5" target="_blank" class="btn-outline">LINKEDIN</a>
           </div>
         </div>
         <!-- PHOTO -->
@@ -598,6 +674,9 @@
       <div class="skill-card reveal">
         <div class="skill-icon">⚙️</div>
         <div class="skill-name">AUTOMATISATION & CONTRÔLE</div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.6">
+          Concevoir, programmer et superviser des systèmes automatisés pour assurer la performance, la fiabilité et la sécurité des procédés industriels.
+        </p>
         <div class="skill-tags">
           <span class="tag">TIA Portal</span><span class="tag">Unity Pro XL</span>
           <span class="tag">GRAFCET</span><span class="tag">Ladder</span>
@@ -605,13 +684,16 @@
           <span class="tag">SCADA</span><span class="tag">PID</span>
         </div>
         <div class="skill-bar-wrap">
-          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%"></div></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:92%"></div></div>
         </div>
       </div>
 
       <div class="skill-card reveal">
         <div class="skill-icon">🌐</div>
-        <div class="skill-name">INDUSTRIE 4.0 & PROTOCOLES</div>
+        <div class="skill-name">INDUSTRIE 4.0 & CONNECTIVITÉ</div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.6">
+          Intégrer les protocoles de communication et solutions IoT pour connecter les machines, collecter les données et optimiser la traçabilité des processus.
+        </p>
         <div class="skill-tags">
           <span class="tag">OPC UA</span><span class="tag">MQTT</span>
           <span class="tag">Modbus TCP</span><span class="tag">Profibus</span>
@@ -619,61 +701,41 @@
           <span class="tag">KepServerEX</span><span class="tag">Node-RED</span>
         </div>
         <div class="skill-bar-wrap">
-          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:85%"></div></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:86%"></div></div>
         </div>
       </div>
 
       <div class="skill-card reveal">
         <div class="skill-icon">💻</div>
-        <div class="skill-name">DÉVELOPPEMENT & DATA</div>
+        <div class="skill-name">DÉVELOPPEMENT & SIMULATION</div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.6">
+          Développer des applications, analyser les données et modéliser des systèmes complexes pour améliorer la prise de décision et l'efficacité industrielle.
+        </p>
         <div class="skill-tags">
           <span class="tag">Python</span><span class="tag">SQL</span>
           <span class="tag">MATLAB</span><span class="tag">C/C++</span>
           <span class="tag">Power BI</span><span class="tag">OpenCV</span>
-          <span class="tag">Java</span>
+          <span class="tag">CATIA</span><span class="tag">ANSYS</span><span class="tag">Simulink</span>
         </div>
         <div class="skill-bar-wrap">
-          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:82%"></div></div>
-        </div>
-      </div>
-
-      <div class="skill-card reveal">
-        <div class="skill-icon">🤖</div>
-        <div class="skill-name">MICROCONTRÔLEURS & IoT</div>
-        <div class="skill-tags">
-          <span class="tag">ESP32</span><span class="tag">Arduino</span>
-          <span class="tag">68HC11</span><span class="tag">UART</span>
-          <span class="tag">I2C</span><span class="tag">SPI</span>
-          <span class="tag">MPU-6050</span><span class="tag">GPS</span>
-        </div>
-        <div class="skill-bar-wrap">
-          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div>
-        </div>
-      </div>
-
-      <div class="skill-card reveal">
-        <div class="skill-icon">📐</div>
-        <div class="skill-name">CONCEPTION & SIMULATION</div>
-        <div class="skill-tags">
-          <span class="tag">CATIA</span><span class="tag">AutoCAD</span>
-          <span class="tag">ANSYS</span><span class="tag">Simulink</span>
-          <span class="tag">Éléments finis</span>
-        </div>
-        <div class="skill-bar-wrap">
-          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:78%"></div></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:83%"></div></div>
         </div>
       </div>
 
       <div class="skill-card reveal">
         <div class="skill-icon">⚡</div>
-        <div class="skill-name">ÉNERGIES & SMART GRID</div>
+        <div class="skill-name">ÉNERGIES & SYSTÈMES INTELLIGENTS</div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.6">
+          Concevoir et intégrer des solutions énergétiques durables et intelligentes pour accompagner la transition vers des réseaux plus efficaces.
+        </p>
         <div class="skill-tags">
-          <span class="tag">Systèmes PV</span><span class="tag">KPI énergie</span>
-          <span class="tag">Smart Grid 4.0</span><span class="tag">IoT énergétique</span>
-          <span class="tag">OpenLCA</span>
+          <span class="tag">ESP32</span><span class="tag">Arduino</span>
+          <span class="tag">UART/I2C/SPI</span><span class="tag">MPU-6050</span>
+          <span class="tag">Systèmes PV</span><span class="tag">Smart Grid 4.0</span>
+          <span class="tag">KPI énergie</span><span class="tag">OpenLCA</span>
         </div>
         <div class="skill-bar-wrap">
-          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:75%"></div></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:78%"></div></div>
         </div>
       </div>
     </div>
@@ -695,16 +757,61 @@
         <div class="tl-dot" style="border-color:var(--orange); box-shadow:0 0 8px var(--orange)"></div>
         <div class="tl-date">2026 — PFE (PROJET DE FIN D'ÉTUDES)</div>
         <div class="tl-company">POLYDESIGN SYSTEMS</div>
-        <div class="tl-role">Digitalisation du Contrôle Qualité</div>
-        <ul class="tl-desc">
-          <li>Conception et déploiement d'un <strong style="color:var(--cyan)">tableau de bord temps réel</strong> pour la supervision complète du contrôle qualité en production</li>
-          <li>Mise en place d'un pipeline de données automatisé reliant les capteurs terrain à la base de données centrale, avec traitement et archivage en continu</li>
-          <li>Développement d'un <strong style="color:var(--cyan)">système de détection d'anomalies</strong> par vision par ordinateur (caméras industrielles + OpenCV) pour identifier les défauts de fabrication sans intervention humaine</li>
-          <li>Résultat : réduction significative du taux de non-conformité et visibilité totale sur les indicateurs qualité en temps réel</li>
-        </ul>
-        <div style="margin-top:1rem;" class="skill-tags">
-          <span class="tag">Python</span><span class="tag">OpenCV</span><span class="tag">SQL</span>
-          <span class="tag">Power BI</span><span class="tag">Vision par ordinateur</span>
+        <div class="tl-role">Système de Détection d'Anomalies par Vision par Ordinateur</div>
+        <div class="tl-inner">
+          <div class="tl-content">
+            <ul class="tl-desc">
+              <li>Développement d'un <strong style="color:var(--cyan)">système de détection d'anomalies</strong> par vision par ordinateur (caméras industrielles + OpenCV/deep learning) pour identifier les défauts de fabrication en temps réel sur la ligne de production</li>
+              <li>Implémentation d'un workflow de <strong style="color:var(--cyan)">validation et d'étiquetage</strong> : après détection, le système génère automatiquement un verdict de conformité — si la pièce est conforme, elle obtient l'autorisation de passer à la station suivante ; sinon, elle est orientée vers une décision opérateur (scrap ou rework)</li>
+              <li>Développement d'un <strong style="color:var(--cyan)">tableau de bord de supervision</strong> des indicateurs qualité (taux de conformité, types de défauts, historique) accessible en temps réel</li>
+            </ul>
+            <div style="margin-top:1rem;" class="skill-tags">
+              <span class="tag">Python</span><span class="tag">OpenCV</span><span class="tag">Deep Learning</span>
+              <span class="tag">SQL</span><span class="tag">Power BI</span><span class="tag">Vision industrielle</span>
+            </div>
+          </div>
+          <div class="tl-thumb">
+            <img src="https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=400&q=60" alt="Vision par ordinateur contrôle qualité" onerror="this.style.display='none'"/>
+            <div class="tl-thumb-overlay"></div>
+            <div class="tl-thumb-label">COMPUTER VISION</div>
+          </div>
+        </div>
+
+        <!-- PFE — Mini galerie images -->
+        <div style="margin-top:1.5rem;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--orange);letter-spacing:3px;margin-bottom:0.75rem;">// CAPTURES DU PROJET PFE</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.75rem;">
+            <div style="height:110px;border-radius:4px;overflow:hidden;border:1px solid var(--border);position:relative;">
+              <img src="1.jpg" alt="Détection anomalies"
+                onerror="this.parentNode.style.background='var(--dark3)';this.parentNode.innerHTML='<div style=\'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px\'><span style=\'font-family:Orbitron,monospace;font-size:1.4rem;color:var(--cyan)\'>1</span><span style=\'font-family:Share Tech Mono,monospace;font-size:0.6rem;color:var(--muted);letter-spacing:1px\'>1.jpg</span></div>'"
+                style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6)"/>
+              <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(5,10,15,0.85);font-family:'Share Tech Mono',monospace;font-size:0.58rem;color:var(--cyan);padding:4px 6px;text-align:center;letter-spacing:1px">DÉTECTION</div>
+            </div>
+            <div style="height:110px;border-radius:4px;overflow:hidden;border:1px solid var(--border);position:relative;">
+              <img src="2.jpg" alt="Validation conformité"
+                onerror="this.parentNode.style.background='var(--dark3)';this.parentNode.innerHTML='<div style=\'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px\'><span style=\'font-family:Orbitron,monospace;font-size:1.4rem;color:var(--cyan)\'>2</span><span style=\'font-family:Share Tech Mono,monospace;font-size:0.6rem;color:var(--muted);letter-spacing:1px\'>2.jpg</span></div>'"
+                style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6)"/>
+              <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(5,10,15,0.85);font-family:'Share Tech Mono',monospace;font-size:0.58rem;color:var(--cyan);padding:4px 6px;text-align:center;letter-spacing:1px">VALIDATION</div>
+            </div>
+            <div style="height:110px;border-radius:4px;overflow:hidden;border:1px solid var(--border);position:relative;">
+              <img src="3.jpg" alt="Dashboard qualité"
+                onerror="this.parentNode.style.background='var(--dark3)';this.parentNode.innerHTML='<div style=\'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px\'><span style=\'font-family:Orbitron,monospace;font-size:1.4rem;color:var(--cyan)\'>3</span><span style=\'font-family:Share Tech Mono,monospace;font-size:0.6rem;color:var(--muted);letter-spacing:1px\'>3.jpg</span></div>'"
+                style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6)"/>
+              <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(5,10,15,0.85);font-family:'Share Tech Mono',monospace;font-size:0.58rem;color:var(--cyan);padding:4px 6px;text-align:center;letter-spacing:1px">DASHBOARD</div>
+            </div>
+            <div style="height:110px;border-radius:4px;overflow:hidden;border:1px solid var(--border);position:relative;">
+              <img src="4.jpg" alt="Caméra industrielle"
+                onerror="this.parentNode.style.background='var(--dark3)';this.parentNode.innerHTML='<div style=\'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px\'><span style=\'font-family:Orbitron,monospace;font-size:1.4rem;color:var(--cyan)\'>4</span><span style=\'font-family:Share Tech Mono,monospace;font-size:0.6rem;color:var(--muted);letter-spacing:1px\'>4.jpg</span></div>'"
+                style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6)"/>
+              <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(5,10,15,0.85);font-family:'Share Tech Mono',monospace;font-size:0.58rem;color:var(--cyan);padding:4px 6px;text-align:center;letter-spacing:1px">CAMÉRA</div>
+            </div>
+            <div style="height:110px;border-radius:4px;overflow:hidden;border:1px solid var(--border);position:relative;">
+              <img src="5.jpg" alt="Setup système"
+                onerror="this.parentNode.style.background='var(--dark3)';this.parentNode.innerHTML='<div style=\'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px\'><span style=\'font-family:Orbitron,monospace;font-size:1.4rem;color:var(--cyan)\'>5</span><span style=\'font-family:Share Tech Mono,monospace;font-size:0.6rem;color:var(--muted);letter-spacing:1px\'>5.jpg</span></div>'"
+                style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6)"/>
+              <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(5,10,15,0.85);font-family:'Share Tech Mono',monospace;font-size:0.58rem;color:var(--cyan);padding:4px 6px;text-align:center;letter-spacing:1px">SETUP</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -713,16 +820,24 @@
         <div class="tl-dot" style="border-color:var(--cyan); box-shadow:0 0 8px var(--cyan)"></div>
         <div class="tl-date">JUILLET — AOÛT 2025 — PFA (PROJET DE FIN D'ANNÉE)</div>
         <div class="tl-company">OCP BENGUERIR</div>
-        <div class="tl-role">Automatisation Industrielle — Architecture Schneider</div>
-        <ul class="tl-desc">
-          <li>Audit complet de l'architecture de contrôle <strong style="color:var(--cyan)">Schneider Electric</strong> sur les lignes de production : cartographie des automates, analyse des boucles de régulation et identification des goulots fonctionnels</li>
-          <li>Conception et développement d'interfaces de supervision <strong style="color:var(--cyan)">SCADA sous Unity Pro XL</strong> : pages opérateurs, synoptiques de process, gestion des alarmes et des états de fonctionnement</li>
-          <li>Proposition d'axes d'amélioration pour la fiabilité et la traçabilité des données de production</li>
-          <li>Résultat : interfaces opérateurs plus lisibles, réduction du temps de diagnostic des pannes</li>
-        </ul>
-        <div style="margin-top:1rem;" class="skill-tags">
-          <span class="tag">Unity Pro XL</span><span class="tag">SCADA</span>
-          <span class="tag">Schneider</span><span class="tag">HMI</span>
+        <div class="tl-role">Supervision SCADA & Programmation Ladder — Stockeuse Phosphate</div>
+        <div class="tl-inner">
+          <div class="tl-content">
+            <ul class="tl-desc">
+              <li>Conception et développement d'interfaces de supervision <strong style="color:var(--cyan)">SCADA sous Unity Pro XL</strong> : synoptiques de process, pages opérateurs et gestion des états de fonctionnement de la stockeuse de phosphate</li>
+              <li>Programmation <strong style="color:var(--cyan)">Ladder</strong> des entrées/sorties du process : gestion des capteurs de niveau, des actionneurs (convoyeurs, vannes) et des séquences de démarrage/arrêt en sécurité</li>
+              <li>Analyse de l'architecture de contrôle <strong style="color:var(--cyan)">Schneider Electric</strong> et identification des axes d'amélioration fonctionnelle</li>
+            </ul>
+            <div style="margin-top:1rem;" class="skill-tags">
+              <span class="tag">Unity Pro XL</span><span class="tag">SCADA</span>
+              <span class="tag">Ladder</span><span class="tag">Schneider</span><span class="tag">HMI</span>
+            </div>
+          </div>
+          <div class="tl-thumb">
+            <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&q=60" alt="Automatisation industrielle OCP" onerror="this.style.display='none'"/>
+            <div class="tl-thumb-overlay"></div>
+            <div class="tl-thumb-label">SCADA / PLC</div>
+          </div>
         </div>
       </div>
 
@@ -735,7 +850,7 @@
         <ul class="tl-desc">
           <li>Diagnostic des pannes récurrentes sur les équipements de production (presses, convoyeurs, moteurs)</li>
           <li>Identification des causes racines par méthode AMDEC et arbre des causes</li>
-          <li>Résultat : recommandations de maintenance préventive pour réduire les arrêts de production</li>
+          <li>Recommandations de maintenance préventive pour réduire les arrêts de production</li>
         </ul>
       </div>
     </div>
@@ -752,17 +867,19 @@
     </div>
 
     <div class="projects-grid">
+      <!-- DRONE -->
       <div class="proj-card reveal">
-        <div class="proj-header">
-          <div class="proj-emoji">🚁</div>
-          <div class="proj-title">COMMANDE PID — DRONE BIROTOR</div>
+        <div class="proj-img">
+          <img src="https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=600&q=60" alt="Drone birotor PID" onerror="this.parentNode.style.background='var(--dark3)'"/>
+          <div class="proj-img-overlay"></div>
+          <div class="proj-img-label">
+            <div class="proj-emoji">🚁</div>
+            <div class="proj-title">COMMANDE PID — DRONE BIROTOR</div>
+          </div>
         </div>
         <div class="proj-body">
           <p class="proj-desc">
-            Conception et implémentation d'un régulateur PID numérique en temps réel pour stabiliser 
-            un drone birotor. Intégration du gyroscope <strong style="color:var(--cyan)">MPU-6050</strong> 
-            pour la mesure d'attitude et d'un module GPS pour le contrôle de position absolue. 
-            Le système ajuste les vitesses des rotors en temps réel pour maintenir la stabilité de vol.
+            Implémentation d'un régulateur <strong style="color:var(--cyan)">PID numérique temps réel</strong> pour stabiliser un drone birotor. Fusion du gyroscope MPU-6050 et GPS pour le contrôle d'attitude et de position absolue, avec ajustement automatique des vitesses rotors.
           </p>
           <div class="proj-tech">
             <span class="tag">PID numérique</span><span class="tag">ESP32</span>
@@ -771,35 +888,40 @@
         </div>
       </div>
 
+      <!-- SCADA DASHBOARD -->
       <div class="proj-card reveal">
-        <div class="proj-header">
-          <div class="proj-emoji">📊</div>
-          <div class="proj-title">DASHBOARD SCADA — SIEMENS S7-1200</div>
+        <div class="proj-img">
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=60" alt="Dashboard SCADA" onerror="this.parentNode.style.background='var(--dark3)'"/>
+          <div class="proj-img-overlay"></div>
+          <div class="proj-img-label">
+            <div class="proj-emoji">📊</div>
+            <div class="proj-title">DASHBOARD SCADA — S7-1200</div>
+          </div>
         </div>
         <div class="proj-body">
           <p class="proj-desc">
-            Système de supervision SCADA complet pour automate Siemens S7-1200 développé sous 
-            <strong style="color:var(--cyan)">Node-RED</strong>. Visualisation temps réel des entrées/sorties, 
-            historisation des données, gestion des alarmes et tableau de bord opérateur accessible depuis 
-            navigateur web.
+            Système de supervision <strong style="color:var(--cyan)">SCADA via Node-RED</strong> pour automate Siemens S7-1200. Visualisation temps réel des E/S, historisation, gestion des alarmes et tableau de bord accessible depuis navigateur web.
           </p>
           <div class="proj-tech">
             <span class="tag">Node-RED</span><span class="tag">S7-1200</span>
-            <span class="tag">SCADA</span><span class="tag">OPC UA</span><span class="tag">Dashboard</span>
+            <span class="tag">OPC UA</span><span class="tag">Dashboard</span>
           </div>
         </div>
       </div>
 
+      <!-- HMI -->
       <div class="proj-card reveal">
-        <div class="proj-header">
-          <div class="proj-emoji">🖥️</div>
-          <div class="proj-title">INTERFACE HMI — TIA PORTAL</div>
+        <div class="proj-img">
+          <img src="https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=600&q=60" alt="Interface HMI TIA Portal" onerror="this.parentNode.style.background='var(--dark3)'"/>
+          <div class="proj-img-overlay"></div>
+          <div class="proj-img-label">
+            <div class="proj-emoji">🖥️</div>
+            <div class="proj-title">INTERFACE HMI — TIA PORTAL</div>
+          </div>
         </div>
         <div class="proj-body">
           <p class="proj-desc">
-            Conception d'une interface graphique HMI professionnelle sous <strong style="color:var(--cyan)">TIA Portal</strong> 
-            pour le pilotage et la surveillance locale de l'automate S7-1200. Interface avec pages de synoptique, 
-            gestion des alarmes, modes de fonctionnement (Manuel/Auto/Sécurité) et journalisation des événements.
+            Interface graphique <strong style="color:var(--cyan)">HMI sous TIA Portal / WinCC</strong> pour pilotage local de l'automate S7-1200 : synoptiques, gestion des alarmes, modes Manuel/Auto/Sécurité et journalisation des événements.
           </p>
           <div class="proj-tech">
             <span class="tag">TIA Portal</span><span class="tag">WinCC</span>
@@ -808,16 +930,19 @@
         </div>
       </div>
 
+      <!-- MOTEUR DC -->
       <div class="proj-card reveal">
-        <div class="proj-header">
-          <div class="proj-emoji">⚡</div>
-          <div class="proj-title">COMMANDE MOTEUR DC — ESP32</div>
+        <div class="proj-img">
+          <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=60" alt="Commande moteur ESP32" onerror="this.parentNode.style.background='var(--dark3)'"/>
+          <div class="proj-img-overlay"></div>
+          <div class="proj-img-label">
+            <div class="proj-emoji">⚡</div>
+            <div class="proj-title">COMMANDE MOTEUR DC — ESP32</div>
+          </div>
         </div>
         <div class="proj-body">
           <p class="proj-desc">
-            Pilotage d'un moteur à courant continu via <strong style="color:var(--cyan)">ESP32</strong> 
-            avec régulateur PID numérique. Supervision à distance via interface web embarquée. 
-            Contrôle de vitesse et de sens de rotation avec retour tachymétrique en temps réel.
+            Pilotage d'un moteur à courant continu via <strong style="color:var(--cyan)">ESP32</strong> avec régulateur PID numérique, supervision à distance via interface web embarquée et retour tachymétrique en temps réel.
           </p>
           <div class="proj-tech">
             <span class="tag">ESP32</span><span class="tag">PID</span>
@@ -826,35 +951,40 @@
         </div>
       </div>
 
+      <!-- CHASSIS -->
       <div class="proj-card reveal">
-        <div class="proj-header">
-          <div class="proj-emoji">🚗</div>
-          <div class="proj-title">CHÂSSIS VOITURE ÉLECTRIQUE — ANSYS</div>
+        <div class="proj-img">
+          <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&q=60" alt="Châssis voiture électrique ANSYS" onerror="this.parentNode.style.background='var(--dark3)'"/>
+          <div class="proj-img-overlay"></div>
+          <div class="proj-img-label">
+            <div class="proj-emoji">🚗</div>
+            <div class="proj-title">CHÂSSIS VOITURE ÉLECTRIQUE</div>
+          </div>
         </div>
         <div class="proj-body">
           <p class="proj-desc">
-            Dimensionnement et optimisation structurelle d'un châssis pour voiture électrique 
-            par simulation éléments finis sous <strong style="color:var(--cyan)">ANSYS</strong>. 
-            Analyse des contraintes mécaniques, optimisation du ratio rigidité/masse et validation 
-            des critères de résistance.
+            Dimensionnement et optimisation structurelle d'un châssis pour voiture électrique par simulation éléments finis sous <strong style="color:var(--cyan)">ANSYS</strong> : analyse des contraintes, optimisation rigidité/masse.
           </p>
           <div class="proj-tech">
             <span class="tag">ANSYS</span><span class="tag">CATIA</span>
-            <span class="tag">Éléments finis</span><span class="tag">Mécanique</span>
+            <span class="tag">Éléments finis</span>
           </div>
         </div>
       </div>
 
+      <!-- MACHINE BOBINAGE -->
       <div class="proj-card reveal">
-        <div class="proj-header">
-          <div class="proj-emoji">🔧</div>
-          <div class="proj-title">MACHINE À BOBINER LES CÂBLES</div>
+        <div class="proj-img">
+          <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600&q=60" alt="Machine bobinage câbles" onerror="this.parentNode.style.background='var(--dark3)'"/>
+          <div class="proj-img-overlay"></div>
+          <div class="proj-img-label">
+            <div class="proj-emoji">🔧</div>
+            <div class="proj-title">MACHINE À BOBINER LES CÂBLES</div>
+          </div>
         </div>
         <div class="proj-body">
           <p class="proj-desc">
-            Conception complète d'une machine à bobiner les câbles électriques en bureau d'étude : 
-            dimensionnement des actionneurs, choix des composants, plans d'assemblage sous 
-            <strong style="color:var(--cyan)">CATIA</strong> et calculs de résistance des matériaux.
+            Conception complète en bureau d'étude d'une machine à bobiner les câbles électriques : dimensionnement des actionneurs, plans d'assemblage sous <strong style="color:var(--cyan)">CATIA</strong> et calculs RDM.
           </p>
           <div class="proj-tech">
             <span class="tag">CATIA</span><span class="tag">AutoCAD</span>
@@ -883,7 +1013,7 @@
           <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
           +212 700-948230
         </a>
-        <a href="https://linkedin.com/in/ikram-sama" target="_blank" class="contact-link">
+        <a href="https://www.linkedin.com/in/ikram-sama-a9a8011a5" target="_blank" class="contact-link">
           <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
           LinkedIn
         </a>
